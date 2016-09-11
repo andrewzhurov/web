@@ -1,16 +1,11 @@
 (ns bip.core
-  (:require [rum.core :as rum]))
-
+  (:require [rum.core :as rum]
+            [bip.mixins :as mix]
+            [bip.controls :as ctrl]))
+(defonce events (atom '()))
+(def passed-events (atom '()))
 (def on-minute  (atom  "50"))
-(defn periodic-refresh [period]
-  {:did-mount 
-   (fn [state]
-     (let [react-comp (:rum/react-component state)
-           interval   (js/setInterval #(rum/request-render react-comp) period)]
-       (assoc state ::interval interval)))        
-   :will-unmount
-   (fn [state]
-     (js/clearInterval (::interval state)))})
+
 
 (rum/defc audio []
   [:audio {:controls false :preload "auto" :auto-play true :src "sounds/beep17.mp3"} ])
@@ -26,22 +21,28 @@
      "Time to feel!"
      (audio)
      ]))
-(rum/defc controls < rum/reactive [to-follow]
-  [:input {:type "text" 
-           :value (rum/react to-follow)
-           :on-change  #(reset! to-follow (-> % .-target .-value))}])
-(rum/defc timer < rum/static (periodic-refresh 20) [on-minute]
+
+(rum/defc timer < rum/static (mix/periodic-refresh 20) [on-minute]
   (let [time (->  (js/Date.) .toTimeString (clojure.string/split " ") first)
         minute (-> time (clojure.string/split ":") second)]
     [:div.timer
      (clock time)
      (alert on-minute minute)
      ]))
+(rum/defc get-time < rum/static [event-map]
+  (let [h (:hour event-map)
+        m (:minute event-map)]
+    [:h1 (str h ":" m)]))
+(rum/defc render-events < rum/reactive [events-atom]
+  [:div
+   (for [event-atom (rum/react events-atom)]
+     [:div.event (get-time @event-atom)])])
 
 (rum/defc app < rum/reactive []
   [:div.app 
    (timer (rum/react on-minute))
-   (controls on-minute)])
+   (ctrl/new-event-button events)
+   (render-events events)])
 
 
 
