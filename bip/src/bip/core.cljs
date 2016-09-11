@@ -36,13 +36,21 @@
 (rum/defc render-events < rum/reactive [events-atom]
   [:div
    (for [event-atom (rum/react events-atom)]
-     [:div.event (get-time @event-atom)])])
+     [:div.event 
+	(render-comp @event-atom)
+])])
 
-(rum/defc app < rum/reactive []
-  [:div.app 
-   (timer (rum/react on-minute))
-   (ctrl/new-event-button events)
-   (render-events events)])
+
+(rum/defc app < rum/reactive  []
+  #_(let [fresh-data (js/Date.)])
+   #_(str fresh-data)
+   #_(render-events events)
+   #_(ctrl/new-event-button)
+   [:div.app 
+    (timer (rum/react on-minute))
+    #_(ctrl/new-event-button events)
+    #_(render-events events)]
+)
 
 
 

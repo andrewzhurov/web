@@ -1,9 +1,14 @@
 (ns bip.controls
   (:require [rum.core :as rum :refer-macros [defc defcs]
-                              :refer [reactive react]]))
-(def fields {:at [:hour :minute]})
-(defn def-event [] (atom {:hour "00" :minute "00" :type :at :editing true}))
-(defc sync-with [event-atom sync-key]
+                              :refer [reactive react]]
+	    [bip.handlers :as hand]))
+(def def-state {:at {:hour "00" :minute "00"  :editing true}})
+
+(defn render-comp [info date]
+  (let [handler (:handler info)]
+    (handler info date))) 
+
+(defc field-sync-with [event-atom sync-key]
   [:input.sync {:type "text"
                 :value ((react event-atom) sync-key)
                 :on-click (fn [e] 
@@ -21,4 +26,4 @@
   [:input {:type "button"
            :value "+"
            :on-click (fn [_] (swap! events-atom
-                                     (fn [old] (conj old (def-event)))))}])
+                                     (fn [old] (conj old (:at def-state)))))}])
