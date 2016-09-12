@@ -1,42 +1,21 @@
 (ns bip.core
   (:require [rum.core :as rum]
             [bip.mixins :as mix]
-            [bip.controls :as ctrl]
-            [bip.handlers :as hand]))
+            [bip.event.controls :as ctrl]
+            [bip.event.handlers :as hand]
+            [bip.components :as comp]))
 (defonce events (atom '()))
 (def passed-events (atom '()))
-(def on-minute  (atom  "50"))
 
 
-(rum/defc audio []
-  [:audio {:controls false :preload "auto" :auto-play true :src "sounds/beep17.mp3"} ])
-
-(rum/defc clock < rum/static [time]
-  [:div.clock
-   time])
-(rum/defc alert < rum/static [on-minute now-minute]
-  (when (= on-minute now-minute)
-    [:div.alert
-     "Time to feel!"
-     (audio)
-     ]))
-
-(rum/defc timer < rum/static [on-minute]
-  (let [time (->  (js/Date.) .toTimeString (clojure.string/split " ") first)
-        minute (-> time (clojure.string/split ":") second)]
-    [:div.timer
-     (clock time)
-     (alert on-minute minute)
-     ]))
-(rum/defc get-time < rum/static [event-map]
-  (let [h (:hour event-map)
-        m (:minute event-map)]
-    [:h1 (str h ":" m)]))
+(defn render-comp [event-atom present-map]
+  (let [handler (:handler @event-atom)]
+    (handler event-atom present-map)))
 (rum/defc render-events < rum/reactive rum/static [events-atom present-map]
   [:div
    (for [event-atom (rum/react events-atom)]
      [:div.event 
-	(ctrl/render-comp event-atom present-map)
+	(render-comp event-atom present-map)
 ])])
 
 
@@ -49,8 +28,8 @@
     [:div.app
      (str js-date) "----" time-str
      [:p (str present-map)]
-     (ctrl/new-event-button events)
-     #_(hand/at (first @events) present-map)
+     (comp/clock (str (:hour present-map) ":" (:minute present-map) ":" (:second present-map)))
+     (comp/new-event-button events)
      (render-events events present-map)]))
 
 
