@@ -1,4 +1,5 @@
-(ns bip.mixins)
+(ns bip.mixins
+  (:require [rum.core :as rum]))
 
 (defn periodic-refresh [period]
   {:did-mount 

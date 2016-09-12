@@ -1,7 +1,8 @@
 (ns bip.core
   (:require [rum.core :as rum]
             [bip.mixins :as mix]
-            [bip.controls :as ctrl]))
+            [bip.controls :as ctrl]
+            [bip.handlers :as hand]))
 (defonce events (atom '()))
 (def passed-events (atom '()))
 (def on-minute  (atom  "50"))
@@ -9,8 +10,6 @@
 
 (rum/defc audio []
   [:audio {:controls false :preload "auto" :auto-play true :src "sounds/beep17.mp3"} ])
-
-
 
 (rum/defc clock < rum/static [time]
   [:div.clock
@@ -22,7 +21,7 @@
      (audio)
      ]))
 
-(rum/defc timer < rum/static (mix/periodic-refresh 20) [on-minute]
+(rum/defc timer < rum/static [on-minute]
   (let [time (->  (js/Date.) .toTimeString (clojure.string/split " ") first)
         minute (-> time (clojure.string/split ":") second)]
     [:div.timer
@@ -33,24 +32,26 @@
   (let [h (:hour event-map)
         m (:minute event-map)]
     [:h1 (str h ":" m)]))
-(rum/defc render-events < rum/reactive [events-atom]
+(rum/defc render-events < rum/reactive rum/static [events-atom present-map]
   [:div
    (for [event-atom (rum/react events-atom)]
      [:div.event 
-	(render-comp @event-atom)
+	(ctrl/render-comp event-atom present-map)
 ])])
 
 
-(rum/defc app < rum/reactive  []
-  #_(let [fresh-data (js/Date.)])
-   #_(str fresh-data)
-   #_(render-events events)
-   #_(ctrl/new-event-button)
-   [:div.app 
-    (timer (rum/react on-minute))
-    #_(ctrl/new-event-button events)
-    #_(render-events events)]
-)
+(rum/defc app < (mix/periodic-refresh 20)  []
+  (let [js-date (js/Date.)
+        time-str (.toTimeString js-date)
+        present-keys [:weekday :month :day :year :hour :minute :second :timezone :region]
+        present-vals (-> (js/Date.) str (clojure.string/split #"[ :]"))
+        present-map (zipmap present-keys present-vals)]
+    [:div.app
+     (str js-date) "----" time-str
+     [:p (str present-map)]
+     (ctrl/new-event-button events)
+     #_(hand/at (first @events) present-map)
+     (render-events events present-map)]))
 
 
 

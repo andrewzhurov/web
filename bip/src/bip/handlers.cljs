@@ -1,6 +1,11 @@
 (ns bip.handlers
   (:require [rum.core :as rum]))
 
-#_(defn at [event-map data] ((rum/defc at-c [e d] [:div {:hour "00" :minute "69" :day "12" :month "Sep"}] 
-) event-map data))
-(rum/defc at [event-map data] "SUUUUP, DUDE!!!") 
+(rum/defc at < rum/reactive rum/static [event-atom present-map]
+  (let [event-map (rum/react event-atom)
+        at-hour (:hour event-map)
+        at-minute (:minute event-map)
+        now-hour (:hour present-map)
+        now-minute (:minute present-map)]
+    [:div.event.at 
+     (str "I'll fire at:" at-hour ":" at-minute " and now the time is:" now-hour ":" now-minute)])) 
