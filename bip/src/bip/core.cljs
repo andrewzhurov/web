@@ -31,7 +31,14 @@
      (comp/clock (str (:hour present-map) ":" (:minute present-map) ":" (:second present-map)))
      (comp/new-event-button events)
      (render-events events present-map)]))
-
+(def at (atom 0))
+#_(rum/defc app < rum/reactive []
+  [:div [:input {:type :text
+                 :value (rum/react at)
+                 :on-change (fn [e] (reset! at (-> e .-target .-value)))}
+         ]
+   (rum/react at)]
+  )
 
 
 (rum/mount (app) 

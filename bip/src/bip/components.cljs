@@ -3,8 +3,8 @@
                               :refer [reactive react]]
             [bip.event.defaults :as defs]))
 
-(defc audio [] ;; fix me
-  [:audio {:controls false :preload "auto" :auto-play true :src "sounds/beep17.mp3"} ])
+(defc audio [path] ;; fix me
+  [:audio {:controls false :preload "auto" :auto-play true :src path} ])
 
 (defc clock < rum/static [time]
   [:div.clock
