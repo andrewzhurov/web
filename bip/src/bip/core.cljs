@@ -3,21 +3,10 @@
             [bip.mixins :as mix]
             [bip.event.controls :as ctrl]
             [bip.event.handlers :as hand]
-            [bip.components :as comp]))
-(defonce events (atom '()))
-(def passed-events (atom '()))
-
-
-(defn render-comp [event-atom present-map]
-  (let [handler (:handler @event-atom)]
-    (handler event-atom present-map)))
-(rum/defc render-events < rum/reactive rum/static [events-atom present-map]
-  [:div
-   (for [event-atom (rum/react events-atom)]
-     [:div.event 
-	(render-comp event-atom present-map)
-])])
-
+            [bip.components :as comp]
+            [bip.render :as rend]
+            [bip.defaults :as defs]))
+(defonce *events (atom '()))
 
 (rum/defc app < (mix/periodic-refresh 20)  []
   (let [js-date (js/Date.)
@@ -29,16 +18,8 @@
      (str js-date) "----" time-str
      [:p (str present-map)]
      (comp/clock (str (:hour present-map) ":" (:minute present-map) ":" (:second present-map)))
-     (comp/new-event-button events)
-     (render-events events present-map)]))
-(def at (atom 0))
-#_(rum/defc app < rum/reactive []
-  [:div [:input {:type :text
-                 :value (rum/react at)
-                 :on-change (fn [e] (reset! at (-> e .-target .-value)))}
-         ]
-   (rum/react at)]
-  )
+     (comp/new-event-button *events)
+     (rend/render-base *events defs/app-alarm present-map)]))
 
 
 (rum/mount (app) 

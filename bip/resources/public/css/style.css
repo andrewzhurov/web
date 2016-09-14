@@ -22,3 +22,7 @@ input {
     background-color: dimgray;
     color: white;
 }
+
+.group {
+    background-color: orange;
+}
