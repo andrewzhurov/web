@@ -18,7 +18,7 @@
      (str js-date) "----" time-str
      [:p (str present-map)]
      (comp/clock (str (:hour present-map) ":" (:minute present-map) ":" (:second present-map)))
-     (comp/new-event-button *events)
+     (comp/new-event-comp *events)
      (rend/render-base *events defs/app-alarm present-map)]))
 
 
