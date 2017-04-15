@@ -6,16 +6,31 @@
 
   :min-lein-version "2.6.1"
 
-  :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.9.89"]
+  :dependencies [[org.clojure/clojure "1.9.0-alpha14"]
+                 [org.clojure/clojurescript "1.9.293"]
                  [org.clojure/core.async "0.2.385"
-                  :exclusions [org.clojure/tools.reader]]
-                 [rum "0.10.2"]
-                 [ring/ring-core "1.5.0"]
-                 [ring/ring-jetty-adapter "1.5.0"]]
+                  #_ (:exclusions [org.clojure/tools.reader])] ;; OK? commented
+                 [rum "0.10.7"]
+                 
+                 [com.taoensso/sente "1.11.0"]
+                 [http-kit "2.2.0"]
+
+
+                 [ring-server "0.4.0"]
+                 [ring "1.5.0"]
+                 [ring/ring-defaults "0.2.1"]
+                 [compojure "1.5.1"]
+                 
+                 ;; so we can make htmls from code
+                 [hiccup "1.0.5"] 
+                 
+                 #_[secretary "1.2.3"]
+                 #_[venantius/accountant "0.1.7"]
+                 
+                 ]
 
   :plugins [[lein-figwheel "0.5.4-7"]
-            [lein-cljsbuild "1.1.3" :exclusions [[org.clojure/clojure]]]]
+            [lein-cljsbuild "1.1.4" :exclusions [[org.clojure/clojure]]]]
 
   :source-paths ["src"]
 
@@ -28,7 +43,9 @@
                 ;; the presence of a :figwheel configuration here
                 ;; will cause figwheel to inject the figwheel client
                 ;; into your build
-                :figwheel {:on-jsload "type-junkie.core/on-js-reload"
+                :figwheel {
+                           ;; :on-jsload "type-junkie.core/on-js-reload"
+
                            ;; :open-urls will pop open your application
                            ;; in the default browser once Figwheel has
                            ;; started and complied your application.
@@ -102,8 +119,8 @@
                    :source-paths ["src" "dev"]
                    ;; for CIDER
                    ;; :plugins [[cider/cider-nrepl "0.12.0"]]
-                   :repl-options {; for nREPL dev you really need to limit output
-                                  :init (set! *print-length* 50)
-                                  :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}}
+                   :repl-options {:init-ns type-junkie.serv.repl
+                                  }
+                   }}
 
 )

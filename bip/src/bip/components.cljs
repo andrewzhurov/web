@@ -32,7 +32,7 @@
   (let [*dd (:drop-down-state state)]
     [:div 
      (drop-down *dd)
-     (str edefs/type-vals-map)
-     (str @*dd ":" ((:current @*dd) edefs/type-vals-map))
+     #_(str edefs/type-vals-map)
+     #_(str @*dd ":" ((:current @*dd) edefs/type-vals-map))
      (new-event-button *events *dd)]
     ))

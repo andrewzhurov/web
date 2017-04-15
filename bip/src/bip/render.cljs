@@ -9,6 +9,6 @@
     [:div 
      (for [[group-key ghand] state-handlers]
        (ghand (group-key grouped) present-map))
-     [:p (str "GROUPED: " grouped)]])
+     #_[:p (str "GROUPED: " grouped)]])
   )
 

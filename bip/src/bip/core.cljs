@@ -13,11 +13,10 @@
         time-str (.toTimeString js-date)
         present-keys [:weekday :month :day :year :hour :minute :second :timezone :region]
         present-vals (-> (js/Date.) str (clojure.string/split #"[ :]"))
-        present-map (zipmap present-keys present-vals)]
+        present-map (zipmap present-keys present-vals)
+        time-str (str (:hour present-map) ":" (:minute present-map) ":" (:second present-map))]
     [:div.app
-     (str js-date) "----" time-str
-     [:p (str present-map)]
-     (comp/clock (str (:hour present-map) ":" (:minute present-map) ":" (:second present-map)))
+     (comp/clock time-str)
      (comp/new-event-comp *events)
      (rend/render-base *events defs/app-alarm present-map)]))
 
